@@ -7,6 +7,7 @@
   <meta name="description" content="The Life We Live Foundation is a for-profit storytelling and crowdfunding platform helping real people share real stories and receive community support." />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="premium.css" />
+  <link rel="stylesheet" href="world-stories.css" />
 </head>
 <body>
   <header class="site-header">
@@ -24,29 +25,30 @@
     </nav>
 
     <section class="hero">
-      <div class="hero-visual">
-        <div class="portrait-card large">
-          <p>Every Story</p>
-          <h3>Has Meaning</h3>
+      <div class="hero-visual world-visual" aria-label="Connected world of TLWL stories">
+        <div class="world-orb">
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+          <div class="orbit orbit-three"></div>
+          <div class="world-core">
+            <span>TLWL</span>
+            <strong>World of Stories</strong>
+          </div>
+          <div id="worldStoryNodes" class="world-story-nodes"></div>
         </div>
-        <div class="portrait-card small top">
-          <span>Hope</span>
-        </div>
-        <div class="portrait-card small bottom">
-          <span>Impact</span>
-        </div>
+        <div id="worldStoryCards" class="world-story-cards"></div>
       </div>
 
       <div class="hero-content">
         <p class="eyebrow">The Life We Live Foundation</p>
-        <h1>Real stories. Real support. Real impact.</h1>
+        <h1>Everyone in this life has a story to tell.</h1>
         <p>
-          TLWL is a for-profit social impact platform using storytelling and crowdfunding
-          to help people share their lived experiences and receive community support.
+          TLWL turns real stories into support, connection, and lasting impact through a
+          for-profit social impact and crowdfunding platform built around lived experience.
         </p>
         <div class="hero-buttons">
-          <a href="#stories" class="btn primary">Watch Stories</a>
-          <a href="#campaigns" class="btn secondary">Support a Campaign</a>
+          <a href="#stories" class="btn primary">Explore Stories</a>
+          <a href="#contribute" class="btn secondary">Contribute Now</a>
         </div>
         <p class="micro-disclaimer">
           Contributions and TLWL support payments are not tax-deductible charitable donations unless specifically stated otherwise.
@@ -89,6 +91,40 @@
         <span class="card-number">03</span>
         <h3>Transparency Builds Trust</h3>
         <p>Each campaign should explain the need, goal, fund use, and impact updates clearly.</p>
+      </div>
+    </section>
+
+    <section id="impact-process" class="section impact-process">
+      <div class="section-heading centered">
+        <p class="section-label">How Impact Moves</p>
+        <h2>One story can open a path for support.</h2>
+        <p>
+          TLWL is built to help a real person, family, student, or community need move from
+          being seen to being supported with care and transparency.
+        </p>
+      </div>
+
+      <div class="impact-steps">
+        <article class="impact-step">
+          <span>01</span>
+          <h3>Share</h3>
+          <p>A story, need, or campaign request is submitted with context and consent.</p>
+        </article>
+        <article class="impact-step">
+          <span>02</span>
+          <h3>Connect</h3>
+          <p>TLWL helps shape the story so supporters understand the person and purpose.</p>
+        </article>
+        <article class="impact-step">
+          <span>03</span>
+          <h3>Support</h3>
+          <p>Supporters can contribute to a campaign or help keep The Life We Live going.</p>
+        </article>
+        <article class="impact-step">
+          <span>04</span>
+          <h3>Impact</h3>
+          <p>Updates can show where support went and how the story continues.</p>
+        </article>
       </div>
     </section>
 
