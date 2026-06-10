@@ -902,6 +902,17 @@ footer a {
   background: rgba(241, 213, 156, 0.16);
 }
 
+.campaign-safety-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(36, 26, 18, 0.1);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .text-link {
   display: inline-flex;
   width: fit-content;
@@ -913,6 +924,32 @@ footer a {
   text-decoration: underline;
   text-underline-offset: 4px;
   cursor: pointer;
+}
+
+.safety-link {
+  display: inline;
+  width: fit-content;
+  border: 0;
+  background: transparent;
+  color: var(--gold-dark);
+  font: inherit;
+  font-weight: 800;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.subtle-btn {
+  background: #f3e7d5;
+  color: var(--coffee);
+  border: 1px solid rgba(143, 100, 44, 0.24);
+  box-shadow: none;
+}
+
+.subtle-btn:hover {
+  background: #ead8bf;
+  box-shadow: 0 12px 28px rgba(42, 31, 23, 0.1);
 }
 
 .report-section {
@@ -960,6 +997,51 @@ footer a {
 
 .public-card > p {
   max-width: 780px;
+}
+
+.safety-panel {
+  padding: 22px 24px;
+  border-radius: 22px;
+  background:
+    linear-gradient(145deg, rgba(255, 253, 248, 0.66), rgba(255, 250, 241, 0.54)),
+    var(--surface);
+  box-shadow: 0 12px 34px rgba(42, 31, 23, 0.08);
+}
+
+.safety-panel .section-label {
+  margin-bottom: 6px;
+  color: var(--gold-dark);
+  opacity: 0.78;
+}
+
+.safety-details summary {
+  width: fit-content;
+  color: var(--gold-dark);
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.safety-details summary::marker {
+  color: var(--gold-dark);
+}
+
+.safety-details p {
+  max-width: 760px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.safety-details .contact-form {
+  margin: 16px 0 0;
+  max-width: 680px;
+}
+
+.safety-details .subtle-btn {
+  width: fit-content;
+  margin-top: 6px;
 }
 
 .public-meta {
@@ -1075,4 +1157,5 @@ footer a {
   .story-thumb { min-height: 180px; }
   .video-frame, .video-frame iframe { min-height: 320px; }
   .campaign-details { padding: 20px; }
+  .checkout-summary p { align-items: flex-start; }
 }

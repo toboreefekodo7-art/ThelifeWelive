@@ -144,7 +144,10 @@ function renderCampaigns(campaigns) {
           : `<p class="status-note">Contributions open after TLWL verification.</p>`
         }
         <a href="${campaignUrl}" class="text-link">View campaign page</a>
-        <button type="button" class="text-link report-link" data-report-target-type="campaign" data-report-target-id="${campaign.id}">Report this campaign</button>
+        <div class="campaign-safety-note">
+          <span>Have a concern about this story?</span>
+          <button type="button" class="safety-link report-link" data-report-target-type="campaign" data-report-target-id="${campaign.id}">Report it here.</button>
+        </div>
       </div>
     `;
 
