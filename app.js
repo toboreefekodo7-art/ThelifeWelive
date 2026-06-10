@@ -53,44 +53,28 @@ const worldStoryCards = [
 
 const storyItems = [
   {
-    type: "Education",
+    type: "Video",
     thumbClass: "gradient-one",
-    label: "Story Category",
-    title: "Learning Toward a Future",
-    description: "Feature students, scholarships, school needs, training goals, or education-focused campaign stories.",
+    label: "Interview",
+    title: "Community Spotlight",
+    description: "Highlight a student, family, creator, or leader making progress through adversity.",
     note: "Video feature"
   },
   {
-    type: "Family",
+    type: "Story",
     thumbClass: "gradient-two",
-    label: "Story Category",
-    title: "Family Support",
-    description: "Share family stories with care, context, consent, and a clear explanation of how support may help.",
+    label: "Written Feature",
+    title: "Personal Journey",
+    description: "Share written stories that explain the person, their challenge, and their goal.",
     note: "Story profile"
   },
   {
-    type: "Recovery",
+    type: "Update",
     thumbClass: "gradient-three",
-    label: "Story Category",
-    title: "A New Step Forward",
-    description: "Hold space for recovery, rebuilding, second chances, and moments where support can create breathing room.",
+    label: "Impact Update",
+    title: "Where Support Went",
+    description: "After campaigns close, post updates showing how contributions helped.",
     note: "Trust update"
-  },
-  {
-    type: "Community",
-    thumbClass: "gradient-one",
-    label: "Story Category",
-    title: "Connected Locally",
-    description: "Highlight neighborhood needs, local leaders, community initiatives, and people helping people.",
-    note: "Community story"
-  },
-  {
-    type: "New Beginning",
-    thumbClass: "gradient-two",
-    label: "Story Category",
-    title: "Starting Again",
-    description: "Make room for stories about transition, opportunity, and the support needed to begin again.",
-    note: "New chapter"
   }
 ];
 
