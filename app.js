@@ -16,6 +16,40 @@ const fallbackCampaigns = [
   }
 ];
 
+const featuredStory = {
+  videoLabel: "Featured Video Coming Soon",
+  videoEmbedHtml: "",
+  tag: "Featured Story",
+  title: "The first full TLWL story will live here.",
+  description: "Add your YouTube, Vimeo, Instagram, or uploaded video embed here. This section is built for a main interview or documentary-style story with a clear call to action.",
+  actionLabel: "Share Your Story",
+  actionHref: "#share-story"
+};
+
+const storyItems = [
+  {
+    type: "Video",
+    thumbClass: "gradient-one",
+    label: "Interview",
+    title: "Community Spotlight",
+    description: "Highlight a student, family, creator, or leader making progress through adversity."
+  },
+  {
+    type: "Story",
+    thumbClass: "gradient-two",
+    label: "Written Feature",
+    title: "Personal Journey",
+    description: "Share written stories that explain the person, their challenge, and their goal."
+  },
+  {
+    type: "Update",
+    thumbClass: "gradient-three",
+    label: "Impact Update",
+    title: "Where Support Went",
+    description: "After campaigns close, post updates showing how contributions helped."
+  }
+];
+
 const money = (value) => {
   const number = Number(value || 0);
   return number.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -89,6 +123,42 @@ function renderCampaigns(campaigns) {
   });
 }
 
+function renderStories() {
+  const featured = document.getElementById("featuredStory");
+  const library = document.getElementById("storyLibrary");
+
+  if (featured) {
+    const videoMarkup = featuredStory.videoEmbedHtml
+      ? featuredStory.videoEmbedHtml
+      : `<div class="play-circle">&#9658;</div><p>${featuredStory.videoLabel}</p>`;
+
+    featured.innerHTML = `
+      <div class="video-frame${featuredStory.videoEmbedHtml ? " has-embed" : ""}">
+        ${videoMarkup}
+      </div>
+      <div class="featured-story-copy">
+        <p class="tag">${featuredStory.tag}</p>
+        <h3>${featuredStory.title}</h3>
+        <p>${featuredStory.description}</p>
+        <a href="${featuredStory.actionHref}" class="btn primary">${featuredStory.actionLabel}</a>
+      </div>
+    `;
+  }
+
+  if (library) {
+    library.innerHTML = storyItems.map((item) => `
+      <article class="story-tile">
+        <div class="story-thumb ${item.thumbClass}"><span>${item.type}</span></div>
+        <div>
+          <p class="mini-label">${item.label}</p>
+          <h3>${item.title}</h3>
+          <p>${item.description}</p>
+        </div>
+      </article>
+    `).join("");
+  }
+}
+
 function setupAmounts() {
   document.querySelectorAll(".amount-grid").forEach((grid) => {
     grid.addEventListener("click", (event) => {
@@ -151,13 +221,14 @@ function setupCheckout() {
         return;
       }
 
-      message.textContent = data.message || "Stripe is not connected yet. Add your Stripe secret key in Netlify environment variables to activate checkout.";
+      message.textContent = data.message || "Stripe checkout is not active yet. Add your Stripe key and enable checkout in Netlify environment variables when ready.";
     } catch (error) {
-      message.textContent = "Checkout backend is not active yet. Deploy with Netlify Functions and add Stripe keys to activate payments.";
+      message.textContent = "Checkout backend is not active yet. Deploy with Netlify Functions, add Stripe keys, and enable checkout when ready.";
     }
   });
 }
 
+renderStories();
 loadCampaigns().then(renderCampaigns);
 setupAmounts();
 setupCheckout();
