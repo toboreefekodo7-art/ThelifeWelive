@@ -17,41 +17,80 @@ const fallbackCampaigns = [
 ];
 
 const featuredStory = {
-  videoLabel: "Featured Video Coming Soon",
+  videoLabel: "Featured Story Film Coming Soon",
   videoEmbedHtml: "",
-  videoKicker: "TLWL Story Film",
-  videoDescription: "Feature interviews, campaign updates, and real community moments here.",
+  videoKicker: "World of Stories",
+  videoDescription: "Feature interviews, campaign updates, and real community moments in this cinematic space.",
   tag: "Featured Story",
-  title: "The first full TLWL story will live here.",
-  description: "Add your YouTube, Vimeo, Instagram, or uploaded video embed here. This section is built for a main interview or documentary-style story with a clear call to action.",
+  title: "A library of real lives, real experiences, and real support.",
+  description: "Add your YouTube, Vimeo, Instagram, or uploaded video embed here. This section is designed for a main interview, campaign story, or documentary-style feature that helps people understand the person behind the need.",
   actionLabel: "Share Your Story",
   actionHref: "#share-story"
 };
 
+const worldStoryNodes = [
+  { label: "Education" },
+  { label: "Family" },
+  { label: "Recovery" },
+  { label: "Community" },
+  { label: "New Beginning" }
+];
+
+const worldStoryCards = [
+  {
+    label: "Education",
+    text: "A student working toward the next chapter."
+  },
+  {
+    label: "Family",
+    text: "A household looking for stability and support."
+  },
+  {
+    label: "Community",
+    text: "A local need connected to people who care."
+  }
+];
+
 const storyItems = [
   {
-    type: "Video",
+    type: "Education",
     thumbClass: "gradient-one",
-    label: "Interview",
-    title: "Community Spotlight",
-    description: "Highlight a student, family, creator, or leader making progress through adversity.",
+    label: "Story Category",
+    title: "Learning Toward a Future",
+    description: "Feature students, scholarships, school needs, training goals, or education-focused campaign stories.",
     note: "Video feature"
   },
   {
-    type: "Story",
+    type: "Family",
     thumbClass: "gradient-two",
-    label: "Written Feature",
-    title: "Personal Journey",
-    description: "Share written stories that explain the person, their challenge, and their goal.",
+    label: "Story Category",
+    title: "Family Support",
+    description: "Share family stories with care, context, consent, and a clear explanation of how support may help.",
     note: "Story profile"
   },
   {
-    type: "Update",
+    type: "Recovery",
     thumbClass: "gradient-three",
-    label: "Impact Update",
-    title: "Where Support Went",
-    description: "After campaigns close, post updates showing how contributions helped.",
+    label: "Story Category",
+    title: "A New Step Forward",
+    description: "Hold space for recovery, rebuilding, second chances, and moments where support can create breathing room.",
     note: "Trust update"
+  },
+  {
+    type: "Community",
+    thumbClass: "gradient-one",
+    label: "Story Category",
+    title: "Connected Locally",
+    description: "Highlight neighborhood needs, local leaders, community initiatives, and people helping people.",
+    note: "Community story"
+  },
+  {
+    type: "New Beginning",
+    thumbClass: "gradient-two",
+    label: "Story Category",
+    title: "Starting Again",
+    description: "Make room for stories about transition, opportunity, and the support needed to begin again.",
+    note: "New chapter"
   }
 ];
 
@@ -126,6 +165,26 @@ function renderCampaigns(campaigns) {
       select.value = link.dataset.campaignLink;
     });
   });
+}
+
+function renderWorldStories() {
+  const nodeList = document.getElementById("worldStoryNodes");
+  const cardList = document.getElementById("worldStoryCards");
+
+  if (nodeList) {
+    nodeList.innerHTML = worldStoryNodes.map((node) => (
+      `<span class="world-node" data-label="${node.label}" aria-label="${node.label} story node"></span>`
+    )).join("");
+  }
+
+  if (cardList) {
+    cardList.innerHTML = worldStoryCards.map((card) => `
+      <article class="world-story-card">
+        <span>${card.label}</span>
+        <p>${card.text}</p>
+      </article>
+    `).join("");
+  }
 }
 
 function renderStories() {
@@ -241,6 +300,7 @@ function setupCheckout() {
   });
 }
 
+renderWorldStories();
 renderStories();
 loadCampaigns().then(renderCampaigns);
 setupAmounts();
