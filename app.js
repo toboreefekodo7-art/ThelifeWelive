@@ -19,6 +19,8 @@ const fallbackCampaigns = [
 const featuredStory = {
   videoLabel: "Featured Video Coming Soon",
   videoEmbedHtml: "",
+  videoKicker: "TLWL Story Film",
+  videoDescription: "Feature interviews, campaign updates, and real community moments here.",
   tag: "Featured Story",
   title: "The first full TLWL story will live here.",
   description: "Add your YouTube, Vimeo, Instagram, or uploaded video embed here. This section is built for a main interview or documentary-style story with a clear call to action.",
@@ -32,21 +34,24 @@ const storyItems = [
     thumbClass: "gradient-one",
     label: "Interview",
     title: "Community Spotlight",
-    description: "Highlight a student, family, creator, or leader making progress through adversity."
+    description: "Highlight a student, family, creator, or leader making progress through adversity.",
+    note: "Video feature"
   },
   {
     type: "Story",
     thumbClass: "gradient-two",
     label: "Written Feature",
     title: "Personal Journey",
-    description: "Share written stories that explain the person, their challenge, and their goal."
+    description: "Share written stories that explain the person, their challenge, and their goal.",
+    note: "Story profile"
   },
   {
     type: "Update",
     thumbClass: "gradient-three",
     label: "Impact Update",
     title: "Where Support Went",
-    description: "After campaigns close, post updates showing how contributions helped."
+    description: "After campaigns close, post updates showing how contributions helped.",
+    note: "Trust update"
   }
 ];
 
@@ -130,7 +135,14 @@ function renderStories() {
   if (featured) {
     const videoMarkup = featuredStory.videoEmbedHtml
       ? featuredStory.videoEmbedHtml
-      : `<div class="play-circle">&#9658;</div><p>${featuredStory.videoLabel}</p>`;
+      : `
+        <div class="video-placeholder">
+          <span>${featuredStory.videoKicker}</span>
+          <div class="play-circle">&#9658;</div>
+          <h3>${featuredStory.videoLabel}</h3>
+          <p>${featuredStory.videoDescription}</p>
+        </div>
+      `;
 
     featured.innerHTML = `
       <div class="video-frame${featuredStory.videoEmbedHtml ? " has-embed" : ""}">
@@ -153,6 +165,7 @@ function renderStories() {
           <p class="mini-label">${item.label}</p>
           <h3>${item.title}</h3>
           <p>${item.description}</p>
+          <span class="story-note">${item.note}</span>
         </div>
       </article>
     `).join("");
