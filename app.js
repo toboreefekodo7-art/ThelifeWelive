@@ -72,7 +72,7 @@ const storyItems = [
     type: "Update",
     thumbClass: "gradient-three",
     label: "Impact Update",
-    title: "Where Support Went",
+    title: "Where the Support Went",
     description: "After campaigns close, post updates showing how contributions helped.",
     note: "Trust update"
   }
