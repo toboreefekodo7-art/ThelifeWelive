@@ -23,16 +23,19 @@ Best for backend Stripe functions:
 3. Add environment variables:
    - STRIPE_SECRET_KEY
    - SITE_URL
+   - ENABLE_STRIPE_CHECKOUT=true
 
 ## Important
 
 The site can publish without Stripe.
-The checkout button will show a setup message until Stripe keys are added.
+The checkout button will show a setup message until Stripe keys are added and ENABLE_STRIPE_CHECKOUT is set to true.
+Stories and videos can be updated in app.js by editing featuredStory and storyItems.
 
 ## Replace first
 
 - your@email.com
 - @tlwlfoundation
 - Campaign info inside netlify/functions/get-campaigns.js
+- Story/video info inside app.js
 - Add real videos/photos/stories
 - Have legal pages reviewed before taking public money
