@@ -1,0 +1,10 @@
+{
+  "name": "tlwl-visual-dynamic-netlify",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Visual dynamic Netlify starter for The Life We Live Foundation",
+  "scripts": {
+    "dev": "netlify dev",
+    "deploy": "netlify deploy --prod"
+  }
+}

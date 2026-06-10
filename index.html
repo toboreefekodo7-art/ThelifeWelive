@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Life We Live Foundation | Stories, Support & Impact</title>
+  <meta name="description" content="The Life We Live Foundation is a for-profit storytelling and crowdfunding platform helping real people share real stories and receive community support." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar">
+      <a class="logo" href="#"><span>TLWL</span></a>
+      <button class="menu-toggle" id="menuToggle">Menu</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#stories">Stories</a></li>
+        <li><a href="#campaigns">Campaigns</a></li>
+        <li><a href="#contribute">Contribute</a></li>
+        <li><a href="#donate-tlwl">Donate to TLWL</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-visual">
+        <div class="portrait-card large">
+          <p>Every Story</p>
+          <h3>Has Meaning</h3>
+        </div>
+        <div class="portrait-card small top">
+          <span>Hope</span>
+        </div>
+        <div class="portrait-card small bottom">
+          <span>Impact</span>
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <p class="eyebrow">The Life We Live Foundation</p>
+        <h1>Real stories. Real support. Real impact.</h1>
+        <p>
+          TLWL is a for-profit social impact platform using storytelling and crowdfunding
+          to help people share their lived experiences and receive community support.
+        </p>
+        <div class="hero-buttons">
+          <a href="#stories" class="btn primary">Watch Stories</a>
+          <a href="#campaigns" class="btn secondary">Support a Campaign</a>
+        </div>
+        <p class="micro-disclaimer">
+          Contributions and TLWL support payments are not tax-deductible charitable donations unless specifically stated otherwise.
+        </p>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section id="about" class="section intro-band">
+      <div>
+        <p class="section-label">Our Purpose</p>
+        <h2>Turning lived experiences into lasting impact.</h2>
+      </div>
+      <div class="intro-copy">
+        <p>
+          The Life We Live Foundation exists to empower individuals and strengthen communities
+          by sharing authentic stories, inspiring generosity, and connecting people with opportunities
+          to create lasting change.
+        </p>
+        <p>
+          The belief is simple: <strong>the more you give, the more you get</strong> —
+          and <strong>everyone has a story to tell in this life we live.</strong>
+        </p>
+      </div>
+    </section>
+
+    <section class="section values">
+      <div class="card glow-card">
+        <span class="card-number">01</span>
+        <h3>The More You Give, The More You Get</h3>
+        <p>Giving creates a cycle of opportunity, hope, support, and community impact.</p>
+      </div>
+      <div class="card glow-card">
+        <span class="card-number">02</span>
+        <h3>Everyone Has a Story</h3>
+        <p>Every person has lived through lessons, challenges, victories, and growth worth sharing.</p>
+      </div>
+      <div class="card glow-card">
+        <span class="card-number">03</span>
+        <h3>Transparency Builds Trust</h3>
+        <p>Each campaign should explain the need, goal, fund use, and impact updates clearly.</p>
+      </div>
+    </section>
+
+    <section id="stories" class="section story-section">
+      <div class="section-heading centered">
+        <p class="section-label">Stories & Videos</p>
+        <h2>Watch the stories behind the support.</h2>
+        <p>
+          This is where TLWL can feature video interviews, written stories, campaign updates,
+          scholarship moments, and community spotlights.
+        </p>
+      </div>
+
+      <div class="featured-story">
+        <div class="video-frame">
+          <div class="play-circle">▶</div>
+          <p>Featured Video Coming Soon</p>
+        </div>
+        <div class="featured-story-copy">
+          <p class="tag">Featured Story</p>
+          <h3>The first full TLWL story will live here.</h3>
+          <p>
+            Add your YouTube, Vimeo, Instagram, or uploaded video embed here. This section is built
+            for a main interview or documentary-style story with a clear call to action.
+          </p>
+          <a href="#share-story" class="btn primary">Share Your Story</a>
+        </div>
+      </div>
+
+      <div class="story-library">
+        <article class="story-tile">
+          <div class="story-thumb gradient-one"><span>Video</span></div>
+          <div>
+            <p class="mini-label">Interview</p>
+            <h3>Community Spotlight</h3>
+            <p>Highlight a student, family, creator, or leader making progress through adversity.</p>
+          </div>
+        </article>
+
+        <article class="story-tile">
+          <div class="story-thumb gradient-two"><span>Story</span></div>
+          <div>
+            <p class="mini-label">Written Feature</p>
+            <h3>Personal Journey</h3>
+            <p>Share written stories that explain the person, their challenge, and their goal.</p>
+          </div>
+        </article>
+
+        <article class="story-tile">
+          <div class="story-thumb gradient-three"><span>Update</span></div>
+          <div>
+            <p class="mini-label">Impact Update</p>
+            <h3>Where Support Went</h3>
+            <p>After campaigns close, post updates showing how contributions helped.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="campaigns" class="section campaign-section">
+      <div class="section-heading">
+        <p class="section-label">Crowdfunding</p>
+        <h2>Support a current campaign.</h2>
+        <p>
+          Campaign cards load dynamically from the starter backend. Update the campaign file later
+          with real stories, goals, and funds raised.
+        </p>
+      </div>
+
+      <div id="campaignList" class="campaign-list">
+        <div class="loading-card">Loading campaigns...</div>
+      </div>
+    </section>
+
+    <section id="contribute" class="section contribute-section">
+      <div class="contribute-copy">
+        <p class="section-label">Contribute</p>
+        <h2>Support a story or campaign.</h2>
+        <p>
+          Choose a campaign amount and, if you want, add extra support to help keep The Life We Live going.
+          When Stripe is connected, this form can send supporters to secure checkout.
+        </p>
+      </div>
+
+      <div class="payment-card glass-card">
+        <h3>Campaign contribution</h3>
+        <label for="campaignSelect">Choose campaign</label>
+        <select id="campaignSelect">
+          <option value="first-campaign">First TLWL Campaign</option>
+        </select>
+
+        <p class="form-label">Choose amount</p>
+        <div class="amount-grid" data-target="contributionAmount">
+          <button type="button" data-value="10">$10</button>
+          <button type="button" data-value="25">$25</button>
+          <button type="button" data-value="50">$50</button>
+          <button type="button" data-value="100">$100</button>
+        </div>
+        <input id="contributionAmount" type="number" placeholder="Custom contribution amount" min="1" />
+
+        <div class="mini-divider"></div>
+
+        <h3>Support TLWL</h3>
+        <p class="small-copy">
+          Optional extra support to help keep The Life We Live going.
+        </p>
+        <div class="amount-grid" data-target="tlwlSupportAmount">
+          <button type="button" data-value="0">$0</button>
+          <button type="button" data-value="1">$1</button>
+          <button type="button" data-value="3">$3</button>
+          <button type="button" data-value="5">$5</button>
+        </div>
+        <input id="tlwlSupportAmount" type="number" placeholder="Custom TLWL support amount" min="0" />
+
+        <div class="checkout-summary">
+          <p><span>Campaign contribution:</span> <strong id="summaryContribution">$0.00</strong></p>
+          <p><span>TLWL support:</span> <strong id="summarySupport">$0.00</strong></p>
+          <p class="total"><span>Total:</span> <strong id="summaryTotal">$0.00</strong></p>
+        </div>
+
+        <button id="checkoutButton" class="btn primary full-btn" type="button">Continue to Secure Checkout</button>
+        <p id="checkoutMessage" class="legal-note dark"></p>
+        <p class="legal-note dark">
+          Contribution Notice: TLWL is a for-profit social impact platform. Contributions and TLWL support payments are not tax-deductible charitable donations unless specifically stated otherwise.
+        </p>
+      </div>
+    </section>
+
+    <section id="donate-tlwl" class="section donate-section">
+      <div class="donate-card">
+        <div>
+          <p class="section-label">Donate to TLWL</p>
+          <h2>Help keep The Life We Live going.</h2>
+          <p>
+            Donations to TLWL help keep the platform moving forward — supporting the stories,
+            video work, website, outreach, campaign management, and the time it takes to continue
+            creating impact.
+          </p>
+          <p>
+            This is separate from contributing to a specific campaign. It supports the platform itself.
+          </p>
+        </div>
+
+        <div class="donate-box">
+          <h3>Support the platform</h3>
+          <p class="small-copy">Use the checkout section above and add TLWL support, or connect this button to a Stripe checkout link.</p>
+          <a class="btn primary full-btn" href="#contribute">Donate to TLWL</a>
+          <p class="legal-note dark">
+            TLWL support payments help keep The Life We Live going and are not tax-deductible charitable donations unless specifically stated otherwise.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="share-story" class="section form-section">
+      <div class="section-heading centered">
+        <p class="section-label">Share Your Story</p>
+        <h2>Have a story TLWL should tell?</h2>
+        <p>Submit the form below. On Netlify, these submissions can appear in your Forms dashboard.</p>
+      </div>
+
+      <form class="contact-form" name="share-story" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="share-story" />
+        <input type="text" name="name" placeholder="Your name" required />
+        <input type="email" name="email" placeholder="Your email" required />
+        <input type="tel" name="phone" placeholder="Phone number" />
+        <textarea name="story" placeholder="Tell us the story..." required></textarea>
+        <label class="checkbox-line">
+          <input type="checkbox" name="consent" required />
+          I understand TLWL may contact me about sharing this story and I will review/complete any required media consent before publishing.
+        </label>
+        <button type="submit" class="btn primary">Submit Story</button>
+      </form>
+    </section>
+
+    <section id="request-support" class="section form-section alt">
+      <div class="section-heading centered">
+        <p class="section-label">Request Support</p>
+        <h2>Request or nominate a campaign.</h2>
+        <p>Use this for students, families, emergency needs, scholarships, and community initiatives.</p>
+      </div>
+
+      <form class="contact-form" name="request-support" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="request-support" />
+        <input type="text" name="requester_name" placeholder="Your name" required />
+        <input type="email" name="requester_email" placeholder="Your email" required />
+        <input type="text" name="recipient_name" placeholder="Recipient/cause name" />
+        <select name="support_type">
+          <option>Student support</option>
+          <option>Family support</option>
+          <option>Emergency assistance</option>
+          <option>Scholarship</option>
+          <option>Community initiative</option>
+          <option>Other</option>
+        </select>
+        <input type="number" name="goal_amount" placeholder="Estimated fundraising goal" />
+        <textarea name="need" placeholder="Explain the need and how funds would be used..." required></textarea>
+        <button type="submit" class="btn primary">Submit Request</button>
+      </form>
+    </section>
+
+    <section id="contact" class="section contact">
+      <div>
+        <p class="section-label">Get Involved</p>
+        <h2>Volunteer, partner, or connect with TLWL.</h2>
+        <p>Email: <a href="mailto:your@email.com">your@email.com</a></p>
+        <p>Instagram: <a href="#">@tlwlfoundation</a></p>
+      </div>
+
+      <form class="contact-form" name="tlwl-contact" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="tlwl-contact" />
+        <input type="text" name="name" placeholder="Your name" required />
+        <input type="email" name="email" placeholder="Your email" required />
+        <select name="interest">
+          <option>I want to volunteer</option>
+          <option>I want to partner</option>
+          <option>I have a general question</option>
+        </select>
+        <textarea name="message" placeholder="Message" required></textarea>
+        <button type="submit" class="btn primary">Submit</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 The Life We Live Foundation. All rights reserved.</p>
+    <p class="footer-disclaimer">
+      The Life We Live Foundation is a for-profit social impact platform. Contributions and TLWL support payments are not tax-deductible charitable donations unless specifically stated otherwise.
+    </p>
+    <p>
+      <a href="legal/privacy.html">Privacy Policy</a> ·
+      <a href="legal/terms.html">Terms of Use</a> ·
+      <a href="legal/contribution-policy.html">Contribution Policy</a> ·
+      <a href="legal/crowdfunding-policy.html">Crowdfunding Policy</a> ·
+      <a href="legal/refund-policy.html">Refund Policy</a> ·
+      <a href="legal/media-consent.html">Media Consent</a>
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
