@@ -27,33 +27,35 @@
       <h1>Loading story...</h1>
     </section>
 
-    <section class="public-card report-panel">
-      <p class="section-label">Report This Story</p>
-      <h2>See something TLWL should review?</h2>
-      <p>A report does not automatically remove a story. TLWL reviews concerns before taking action.</p>
-      <form class="contact-form" name="report-story" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field" data-platform-form="report">
-        <input type="hidden" name="form-name" value="report-story" />
-        <input type="hidden" name="target_type" value="story" />
-        <input type="hidden" name="target_id" data-report-target-id />
-        <p class="hidden-field">
-          <label>Do not fill this out if you are human: <input name="bot-field" /></label>
-        </p>
-        <input type="text" name="reporter_name" placeholder="Your name" required />
-        <input type="email" name="reporter_email" placeholder="Your email" required />
-        <select name="reason" required>
-          <option value="">Choose a report reason</option>
-          <option value="misleading_or_false_story">Misleading or false story</option>
-          <option value="fake_identity_or_impersonation">Fake identity or impersonation</option>
-          <option value="misuse_of_funds_concern">Misuse of funds concern</option>
-          <option value="inappropriate_or_harmful_content">Inappropriate or harmful content</option>
-          <option value="privacy_or_consent_concern">Privacy or consent concern</option>
-          <option value="copyright_or_content_ownership_issue">Copyright/content ownership issue</option>
-          <option value="other">Other</option>
-        </select>
-        <textarea name="details" placeholder="Explain the concern..." required></textarea>
-        <p class="form-status" data-form-status></p>
-        <button type="submit" class="btn primary">Submit Report</button>
-      </form>
+    <section class="public-card safety-panel">
+      <p class="section-label">Safety & Trust</p>
+      <details class="safety-details">
+        <summary>Have a concern about this story? Report it here.</summary>
+        <p>A report does not automatically remove a story. TLWL reviews concerns before taking action.</p>
+        <form class="contact-form" name="report-story" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field" data-platform-form="report">
+          <input type="hidden" name="form-name" value="report-story" />
+          <input type="hidden" name="target_type" value="story" />
+          <input type="hidden" name="target_id" data-report-target-id />
+          <p class="hidden-field">
+            <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+          </p>
+          <input type="text" name="reporter_name" placeholder="Your name" required />
+          <input type="email" name="reporter_email" placeholder="Your email" required />
+          <select name="reason" required>
+            <option value="">Choose a report reason</option>
+            <option value="misleading_or_false_story">Misleading or false story</option>
+            <option value="fake_identity_or_impersonation">Fake identity or impersonation</option>
+            <option value="misuse_of_funds_concern">Misuse of funds concern</option>
+            <option value="inappropriate_or_harmful_content">Inappropriate or harmful content</option>
+            <option value="privacy_or_consent_concern">Privacy or consent concern</option>
+            <option value="copyright_or_content_ownership_issue">Copyright/content ownership issue</option>
+            <option value="other">Other</option>
+          </select>
+          <textarea name="details" placeholder="Explain the concern..." required></textarea>
+          <p class="form-status" data-form-status></p>
+          <button type="submit" class="btn subtle-btn">Submit concern</button>
+        </form>
+      </details>
     </section>
   </main>
 
