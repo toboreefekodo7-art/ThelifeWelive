@@ -70,7 +70,7 @@
           to create lasting change.
         </p>
         <p>
-          The belief is simple: <strong>the more you give, the more you get</strong> —
+          The belief is simple: <strong>the more you give, the more you get</strong> --
           and <strong>everyone has a story to tell in this life we live.</strong>
         </p>
       </div>
@@ -147,8 +147,8 @@
         <p class="section-label">Crowdfunding</p>
         <h2>Support a current campaign.</h2>
         <p>
-          Campaign cards load dynamically from the starter backend. Update the campaign file later
-          with real stories, goals, and funds raised.
+          Campaign cards can load from Supabase after TLWL verifies and publishes support requests.
+          Contributions stay closed while a campaign is unverified, paused, or under review.
         </p>
       </div>
 
@@ -217,7 +217,7 @@
           <p class="section-label">Donate to TLWL</p>
           <h2>Help keep The Life We Live going.</h2>
           <p>
-            Donations to TLWL help keep the platform moving forward — supporting the stories,
+            Donations to TLWL help keep the platform moving forward, supporting the stories,
             video work, website, outreach, campaign management, and the time it takes to continue
             creating impact.
           </p>
@@ -241,10 +241,13 @@
       <div class="section-heading centered">
         <p class="section-label">Share Your Story</p>
         <h2>Have a story TLWL should tell?</h2>
-        <p>Submit the form below. On Netlify, these submissions can appear in your Forms dashboard.</p>
+        <p>
+          Submit your story for TLWL review. Submitting a story does not guarantee publication
+          or campaign approval.
+        </p>
       </div>
 
-      <form class="contact-form" name="share-story" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field">
+      <form class="contact-form" id="storySubmissionForm" name="share-story" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field" data-platform-form="story">
         <input type="hidden" name="form-name" value="share-story" />
         <p class="hidden-field">
           <label>Do not fill this out if you are human: <input name="bot-field" /></label>
@@ -252,11 +255,40 @@
         <input type="text" name="name" placeholder="Your name" required />
         <input type="email" name="email" placeholder="Your email" required />
         <input type="tel" name="phone" placeholder="Phone number" />
+        <input type="text" name="title" placeholder="Story title" required />
+        <select name="category" required>
+          <option value="">Choose a story category</option>
+          <option value="education">Education</option>
+          <option value="family">Family</option>
+          <option value="recovery">Recovery</option>
+          <option value="community">Community</option>
+          <option value="new_beginning">New Beginning</option>
+          <option value="other">Other</option>
+        </select>
+        <select name="support_type" required>
+          <option value="share_story_only">Share my story only</option>
+          <option value="financial_support">Request financial support</option>
+          <option value="scholarship_support">Request scholarship support</option>
+          <option value="emergency_assistance">Request emergency assistance</option>
+          <option value="nominate_someone_else">Nominate someone else</option>
+        </select>
+        <input type="url" name="video_url" placeholder="Video link (optional for now)" />
+        <p class="helper-text">Upload your video directly here, or paste a video link if you already have one. Direct video uploads will be added in Part 2.</p>
+        <input type="number" name="goal_amount" placeholder="Requested support goal, if any" min="0" />
         <textarea name="story" placeholder="Tell us the story..." required></textarea>
         <label class="checkbox-line">
           <input type="checkbox" name="consent" required />
           I understand TLWL may contact me about sharing this story and I will review/complete any required media consent before publishing.
         </label>
+        <label class="checkbox-line">
+          <input type="checkbox" name="accuracy_consent" required />
+          I confirm this submission is truthful to the best of my knowledge and that I have permission to share it.
+        </label>
+        <label class="checkbox-line">
+          <input type="checkbox" name="media_consent" />
+          I understand photos, videos, or documents may require additional consent before publication.
+        </label>
+        <p class="form-status" data-form-status></p>
         <button type="submit" class="btn primary">Submit Story</button>
       </form>
     </section>
@@ -268,7 +300,7 @@
         <p>Use this for students, families, emergency needs, scholarships, and community initiatives.</p>
       </div>
 
-      <form class="contact-form" name="request-support" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field">
+      <form class="contact-form" name="request-support" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field" data-platform-form="support">
         <input type="hidden" name="form-name" value="request-support" />
         <p class="hidden-field">
           <label>Do not fill this out if you are human: <input name="bot-field" /></label>
@@ -276,17 +308,76 @@
         <input type="text" name="requester_name" placeholder="Your name" required />
         <input type="email" name="requester_email" placeholder="Your email" required />
         <input type="text" name="recipient_name" placeholder="Recipient/cause name" />
-        <select name="support_type">
-          <option>Student support</option>
-          <option>Family support</option>
-          <option>Emergency assistance</option>
-          <option>Scholarship</option>
-          <option>Community initiative</option>
-          <option>Other</option>
+        <input type="text" name="title" placeholder="Support request title" required />
+        <select name="category" required>
+          <option value="">Choose a story category</option>
+          <option value="education">Education</option>
+          <option value="family">Family</option>
+          <option value="recovery">Recovery</option>
+          <option value="community">Community</option>
+          <option value="new_beginning">New Beginning</option>
+          <option value="other">Other</option>
+        </select>
+        <select name="support_type" required>
+          <option value="financial_support">Request financial support</option>
+          <option value="scholarship_support">Request scholarship support</option>
+          <option value="emergency_assistance">Request emergency assistance</option>
+          <option value="nominate_someone_else">Nominate someone else</option>
         </select>
         <input type="number" name="goal_amount" placeholder="Estimated fundraising goal" />
+        <input type="url" name="video_url" placeholder="Video link (optional for now)" />
+        <p class="helper-text">Submitting a support request does not guarantee campaign approval. Requests that involve money require TLWL verification before contributions can open.</p>
         <textarea name="need" placeholder="Explain the need and how funds would be used..." required></textarea>
+        <label class="checkbox-line">
+          <input type="checkbox" name="consent" required />
+          I understand TLWL may contact me, request verification, and decide whether this request can become a public campaign.
+        </label>
+        <label class="checkbox-line">
+          <input type="checkbox" name="accuracy_consent" required />
+          I confirm this request is truthful to the best of my knowledge and that I have permission to share it.
+        </label>
+        <p class="form-status" data-form-status></p>
         <button type="submit" class="btn primary">Submit Request</button>
+      </form>
+    </section>
+
+    <section id="report-content" class="section form-section report-section">
+      <div class="section-heading centered">
+        <p class="section-label">Report a Story or Campaign</p>
+        <h2>Help TLWL review concerns carefully.</h2>
+        <p>
+          Reports do not automatically remove a story or campaign. TLWL can review, clear,
+          pause, remove, or mark an item for refund review when needed.
+        </p>
+      </div>
+
+      <form class="contact-form" name="report-content" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field" data-platform-form="report">
+        <input type="hidden" name="form-name" value="report-content" />
+        <p class="hidden-field">
+          <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+        </p>
+        <input type="text" name="reporter_name" placeholder="Your name" required />
+        <input type="email" name="reporter_email" placeholder="Your email" required />
+        <select name="target_type" required>
+          <option value="story">Story</option>
+          <option value="campaign">Campaign</option>
+        </select>
+        <input type="text" name="target_id" placeholder="Story or campaign ID" required />
+        <select name="reason" required>
+          <option value="">Choose a report reason</option>
+          <option value="misleading_or_false_story">Misleading or false story</option>
+          <option value="fake_identity_or_impersonation">Fake identity or impersonation</option>
+          <option value="misuse_of_funds_concern">Misuse of funds concern</option>
+          <option value="inappropriate_or_harmful_content">Inappropriate or harmful content</option>
+          <option value="privacy_or_consent_concern">Privacy or consent concern</option>
+          <option value="copyright_or_content_ownership_issue">Copyright/content ownership issue</option>
+          <option value="other">Other</option>
+        </select>
+        <textarea name="details" placeholder="Explain the concern..." required></textarea>
+        <input type="url" name="supporting_file_url" placeholder="Optional screenshot or supporting file link" />
+        <p class="helper-text">Direct screenshot/file upload support will be added with the Part 2 upload work.</p>
+        <p class="form-status" data-form-status></p>
+        <button type="submit" class="btn primary">Submit Report</button>
       </form>
     </section>
 
@@ -317,16 +408,16 @@
   </main>
 
   <footer>
-    <p>© 2026 The Life We Live Foundation. All rights reserved.</p>
+    <p>(c) 2026 The Life We Live Foundation. All rights reserved.</p>
     <p class="footer-disclaimer">
       The Life We Live Foundation is a for-profit social impact platform. Contributions and TLWL support payments are not tax-deductible charitable donations unless specifically stated otherwise.
     </p>
     <p>
-      <a href="legal/privacy.html">Privacy Policy</a> ·
-      <a href="legal/terms.html">Terms of Use</a> ·
-      <a href="legal/contribution-policy.html">Contribution Policy</a> ·
-      <a href="legal/crowdfunding-policy.html">Crowdfunding Policy</a> ·
-      <a href="legal/refund-policy.html">Refund Policy</a> ·
+      <a href="legal/privacy.html">Privacy Policy</a> |
+      <a href="legal/terms.html">Terms of Use</a> |
+      <a href="legal/contribution-policy.html">Contribution Policy</a> |
+      <a href="legal/crowdfunding-policy.html">Crowdfunding Policy</a> |
+      <a href="legal/refund-policy.html">Refund Policy</a> |
       <a href="legal/media-consent.html">Media Consent</a>
     </p>
   </footer>

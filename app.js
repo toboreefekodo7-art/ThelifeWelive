@@ -7,6 +7,8 @@ const fallbackCampaigns = [
     goal: 1000,
     raised: 0,
     donors: 0,
+    canContribute: false,
+    reportStatus: "no_reports",
     uses: [
       "Direct support to the approved recipient",
       "Scholarship or educational expenses",
@@ -107,9 +109,13 @@ function renderCampaigns(campaigns) {
 
   list.innerHTML = "";
   select.innerHTML = "";
+  let openCampaigns = 0;
 
   campaigns.forEach((campaign) => {
     const percent = campaign.goal > 0 ? Math.min(100, Math.round((campaign.raised / campaign.goal) * 100)) : 0;
+    const canContribute = campaign.canContribute === true;
+    const reportStatus = campaign.reportStatus || campaign.report_status || "no_reports";
+    const campaignUrl = `campaign.html?id=${encodeURIComponent(campaign.id)}`;
 
     const article = document.createElement("article");
     article.className = "campaign-card";
@@ -132,23 +138,41 @@ function renderCampaigns(campaigns) {
       <div class="campaign-details">
         <h4>How funds may be used:</h4>
         <ul>${(campaign.uses || []).map(item => `<li>${item}</li>`).join("")}</ul>
-        <a href="#contribute" class="btn primary" data-campaign-link="${campaign.id}">Support This Campaign</a>
+        ${reportStatus === "under_review" || reportStatus === "paused" ? `<p class="status-note">Under Review: contributions are paused while TLWL reviews this campaign.</p>` : ""}
+        ${canContribute
+          ? `<a href="#contribute" class="btn primary" data-campaign-link="${campaign.id}">Contribute to this story</a>`
+          : `<p class="status-note">Contributions open after TLWL verification.</p>`
+        }
+        <a href="${campaignUrl}" class="text-link">View campaign page</a>
+        <button type="button" class="text-link report-link" data-report-target-type="campaign" data-report-target-id="${campaign.id}">Report this campaign</button>
       </div>
     `;
 
     list.appendChild(article);
 
-    const option = document.createElement("option");
-    option.value = campaign.id;
-    option.textContent = campaign.title;
-    select.appendChild(option);
+    if (canContribute) {
+      const option = document.createElement("option");
+      option.value = campaign.id;
+      option.textContent = campaign.title;
+      select.appendChild(option);
+      openCampaigns++;
+    }
   });
+
+  if (!openCampaigns) {
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "No verified campaigns are accepting contributions yet";
+    select.appendChild(option);
+  }
 
   document.querySelectorAll("[data-campaign-link]").forEach((link) => {
     link.addEventListener("click", () => {
       select.value = link.dataset.campaignLink;
     });
   });
+
+  setupReportPrefill();
 }
 
 function renderWorldStories() {
@@ -261,6 +285,11 @@ function setupCheckout() {
       return;
     }
 
+    if (contribution > 0 && !campaignId) {
+      message.textContent = "No verified campaign is accepting contributions yet. You can still add TLWL support if you want to help keep The Life We Live going.";
+      return;
+    }
+
     message.textContent = "Preparing secure checkout...";
 
     try {
@@ -284,9 +313,86 @@ function setupCheckout() {
   });
 }
 
+function formPayload(form) {
+  const data = new FormData(form);
+  return Array.from(data.entries()).reduce((payload, [key, value]) => {
+    if (key !== "bot-field" && key !== "form-name") {
+      payload[key] = value;
+    }
+    return payload;
+  }, {});
+}
+
+function nativeSubmit(form) {
+  form.dataset.platformSubmitting = "native";
+  HTMLFormElement.prototype.submit.call(form);
+}
+
+function setupPlatformForms() {
+  document.querySelectorAll("[data-platform-form]").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      if (form.dataset.platformSubmitting === "native") return;
+
+      event.preventDefault();
+      const formType = form.dataset.platformForm;
+      const endpoint = formType === "report" ? "/api/submit-report" : "/api/submit-story";
+      const status = form.querySelector("[data-form-status]");
+      const submitButton = form.querySelector("button[type='submit']");
+
+      if (status) status.textContent = "Submitting for TLWL review...";
+      if (submitButton) submitButton.disabled = true;
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formPayload(form))
+        });
+        const data = await response.json();
+
+        if (data.platformActive === false) {
+          if (status) status.textContent = data.message || "Continuing through Netlify Forms...";
+          nativeSubmit(form);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(data.message || "Submission could not be saved.");
+        }
+
+        if (status) status.textContent = data.message || "Submitted for TLWL review.";
+        window.location.href = "/thanks.html";
+      } catch (error) {
+        if (status) status.textContent = `${error.message} Continuing through Netlify Forms.`;
+        nativeSubmit(form);
+      } finally {
+        if (submitButton) submitButton.disabled = false;
+      }
+    });
+  });
+}
+
+function setupReportPrefill() {
+  document.querySelectorAll(".report-link").forEach((button) => {
+    if (button.dataset.reportReady === "true") return;
+    button.dataset.reportReady = "true";
+
+    button.addEventListener("click", () => {
+      const form = document.querySelector("[data-platform-form='report']");
+      if (!form) return;
+      const typeField = form.elements["target_type"];
+      const idField = form.elements["target_id"];
+      if (typeField) typeField.value = button.dataset.reportTargetType || "story";
+      if (idField) idField.value = button.dataset.reportTargetId || "";
+      document.getElementById("report-content")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
 renderWorldStories();
 renderStories();
 loadCampaigns().then(renderCampaigns);
 setupAmounts();
 setupCheckout();
+setupPlatformForms();
 updateSummary();
