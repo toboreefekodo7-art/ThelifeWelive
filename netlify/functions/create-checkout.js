@@ -8,14 +8,15 @@ exports.handler = async (event) => {
   }
 
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-  const siteUrl = process.env.SITE_URL || process.env.URL || "http://localhost:8888";
+  const checkoutEnabled = process.env.ENABLE_STRIPE_CHECKOUT === "true";
+  const siteUrl = (process.env.SITE_URL || process.env.URL || "http://localhost:8888").replace(/\/$/, "");
 
-  if (!stripeSecretKey) {
+  if (!checkoutEnabled || !stripeSecretKey) {
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: "Stripe is not connected yet. Add STRIPE_SECRET_KEY and SITE_URL in Netlify environment variables."
+        message: "Stripe checkout is not active yet. Add STRIPE_SECRET_KEY, SITE_URL, and ENABLE_STRIPE_CHECKOUT=true in Netlify environment variables when you are ready."
       })
     };
   }

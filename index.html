@@ -101,50 +101,8 @@
         </p>
       </div>
 
-      <div class="featured-story">
-        <div class="video-frame">
-          <div class="play-circle">▶</div>
-          <p>Featured Video Coming Soon</p>
-        </div>
-        <div class="featured-story-copy">
-          <p class="tag">Featured Story</p>
-          <h3>The first full TLWL story will live here.</h3>
-          <p>
-            Add your YouTube, Vimeo, Instagram, or uploaded video embed here. This section is built
-            for a main interview or documentary-style story with a clear call to action.
-          </p>
-          <a href="#share-story" class="btn primary">Share Your Story</a>
-        </div>
-      </div>
-
-      <div class="story-library">
-        <article class="story-tile">
-          <div class="story-thumb gradient-one"><span>Video</span></div>
-          <div>
-            <p class="mini-label">Interview</p>
-            <h3>Community Spotlight</h3>
-            <p>Highlight a student, family, creator, or leader making progress through adversity.</p>
-          </div>
-        </article>
-
-        <article class="story-tile">
-          <div class="story-thumb gradient-two"><span>Story</span></div>
-          <div>
-            <p class="mini-label">Written Feature</p>
-            <h3>Personal Journey</h3>
-            <p>Share written stories that explain the person, their challenge, and their goal.</p>
-          </div>
-        </article>
-
-        <article class="story-tile">
-          <div class="story-thumb gradient-three"><span>Update</span></div>
-          <div>
-            <p class="mini-label">Impact Update</p>
-            <h3>Where Support Went</h3>
-            <p>After campaigns close, post updates showing how contributions helped.</p>
-          </div>
-        </article>
-      </div>
+      <div id="featuredStory" class="featured-story"></div>
+      <div id="storyLibrary" class="story-library"></div>
     </section>
 
     <section id="campaigns" class="section campaign-section">
@@ -249,8 +207,11 @@
         <p>Submit the form below. On Netlify, these submissions can appear in your Forms dashboard.</p>
       </div>
 
-      <form class="contact-form" name="share-story" method="POST" data-netlify="true">
+      <form class="contact-form" name="share-story" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="share-story" />
+        <p class="hidden-field">
+          <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+        </p>
         <input type="text" name="name" placeholder="Your name" required />
         <input type="email" name="email" placeholder="Your email" required />
         <input type="tel" name="phone" placeholder="Phone number" />
@@ -270,8 +231,11 @@
         <p>Use this for students, families, emergency needs, scholarships, and community initiatives.</p>
       </div>
 
-      <form class="contact-form" name="request-support" method="POST" data-netlify="true">
+      <form class="contact-form" name="request-support" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="request-support" />
+        <p class="hidden-field">
+          <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+        </p>
         <input type="text" name="requester_name" placeholder="Your name" required />
         <input type="email" name="requester_email" placeholder="Your email" required />
         <input type="text" name="recipient_name" placeholder="Recipient/cause name" />
@@ -297,8 +261,11 @@
         <p>Instagram: <a href="#">@tlwlfoundation</a></p>
       </div>
 
-      <form class="contact-form" name="tlwl-contact" method="POST" data-netlify="true">
+      <form class="contact-form" name="tlwl-contact" method="POST" action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="tlwl-contact" />
+        <p class="hidden-field">
+          <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+        </p>
         <input type="text" name="name" placeholder="Your name" required />
         <input type="email" name="email" placeholder="Your email" required />
         <select name="interest">
