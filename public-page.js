@@ -26,9 +26,33 @@ const setReportTarget = (id) => {
   });
 };
 
-const statusLabel = (status, reportStatus, paused) => {
-  if (reportStatus === "under_review" || reportStatus === "paused" || paused) return "Under Review";
+const statusLabel = (status, reportStatus, paused, reviewStatus) => {
+  if (reviewStatus === "under_review" || reportStatus === "under_review" || reportStatus === "paused" || paused) return "Under Review";
   return String(status || "Pending").replace(/_/g, " ");
+};
+
+const campaignUrl = (campaign) => (
+  campaign?.slug ? `campaign.html?slug=${encodeURIComponent(campaign.slug)}` : `campaign.html?id=${encodeURIComponent(campaign?.id || "")}`
+);
+
+const renderVideoBlock = (url, thumbnailUrl, label = "Watch story video") => {
+  if (!url) {
+    return `
+      <div class="public-video-card no-video">
+        <span class="mini-label">Story Video</span>
+        <p>Video preview coming soon.</p>
+      </div>
+    `;
+  }
+
+  const escapedUrl = escapeHtml(url);
+  const escapedThumb = escapeHtml(thumbnailUrl);
+  return `
+    <a class="public-video-card" href="${escapedUrl}" target="_blank" rel="noopener"${thumbnailUrl ? ` style="background-image: url('${escapedThumb}')"` : ""}>
+      <span class="play-circle small">&#9658;</span>
+      <span>${escapeHtml(label)}</span>
+    </a>
+  `;
 };
 
 async function loadPublicRecord() {
@@ -45,7 +69,7 @@ async function loadPublicRecord() {
       content.innerHTML = `
         <p class="section-label">TLWL ${pageType}</p>
         <h1>This ${pageType} is not published yet.</h1>
-        <p>Approved TLWL stories and verified campaigns will appear here after review.</p>
+        <p>Public TLWL stories and campaigns will appear here after required information and basic checks are complete.</p>
       `;
       return;
     }
@@ -67,22 +91,37 @@ async function loadPublicRecord() {
 
 function renderStory(story, platformActive) {
   const campaign = Array.isArray(story.campaigns) ? story.campaigns[0] : null;
+  const campaignStatus = campaign
+    ? statusLabel(campaign.campaign_status || campaign.status, campaign.report_status, campaign.contributions_paused, campaign.review_status)
+    : "Story only";
   content.innerHTML = `
     <p class="section-label">${escapeHtml(story.category || "Story")}</p>
     <h1>${escapeHtml(story.title)}</h1>
     <div class="public-meta">
       <span>${escapeHtml(statusLabel(story.status, story.report_status))}</span>
+      <span>${escapeHtml(campaignStatus)}</span>
       <span>${platformActive ? "Published story" : "Preview placeholder"}</span>
     </div>
-    ${story.video_url ? `<a class="video-link" href="${escapeHtml(story.video_url)}" target="_blank" rel="noopener">Watch video</a>` : ""}
+    ${renderVideoBlock(story.video_url, story.video_thumbnail_url)}
     <p>${escapeHtml(story.story_body)}</p>
-    ${campaign ? `<a class="btn primary" href="campaign.html?id=${encodeURIComponent(campaign.id)}">View related campaign</a>` : ""}
+    ${campaign ? `
+      <div class="campaign-meter compact-meter">
+        <p><strong>${money(campaign.amount_raised)}</strong> raised of ${money(campaign.goal_amount)}</p>
+        <div class="progress-bar"><div class="progress" style="width: ${Math.min(100, Math.round((Number(campaign.amount_raised || 0) / Number(campaign.goal_amount || 1)) * 100))}%"></div></div>
+        <p>${Number(campaign.supporter_count || 0)} supporters</p>
+      </div>
+      ${campaign.review_status === "under_review" || campaign.contributions_paused ? `<p class="status-note">Under Review: contributions are paused while TLWL reviews this story.</p>` : ""}
+      ${campaign.canContribute
+        ? `<a class="btn primary" href="${campaignUrl(campaign)}">Contribute to this story</a>`
+        : `<a class="btn secondary dark-secondary" href="${campaignUrl(campaign)}">View related campaign</a>`
+      }
+    ` : ""}
     <p class="legal-note dark">TLWL is a for-profit social impact platform. Contributions and TLWL support payments are not tax-deductible charitable donations unless specifically stated otherwise.</p>
   `;
 }
 
 function renderCampaign(campaign, platformActive) {
-  const status = statusLabel(campaign.status, campaign.report_status, campaign.contributions_paused);
+  const status = statusLabel(campaign.campaign_status || campaign.status, campaign.report_status, campaign.contributions_paused, campaign.review_status);
   const story = campaign.stories || {};
   const disabled = !campaign.canContribute;
 
@@ -91,7 +130,7 @@ function renderCampaign(campaign, platformActive) {
     <h1>${escapeHtml(campaign.title)}</h1>
     <div class="public-meta">
       <span>${escapeHtml(status)}</span>
-      <span>${platformActive ? "Verified campaign page" : "Preview placeholder"}</span>
+      <span>${platformActive ? "Public campaign page" : "Preview placeholder"}</span>
     </div>
     <div class="campaign-meter">
       <p><strong>${money(campaign.amount_raised)}</strong> raised of ${money(campaign.goal_amount)}</p>
@@ -100,7 +139,7 @@ function renderCampaign(campaign, platformActive) {
     </div>
     ${status === "Under Review" ? `<p class="status-note">Under Review: contributions are paused while TLWL reviews this campaign.</p>` : ""}
     <p>${escapeHtml(campaign.fund_use_description || story.story_body || "Campaign details will appear here after TLWL review.")}</p>
-    ${story.video_url ? `<a class="video-link" href="${escapeHtml(story.video_url)}" target="_blank" rel="noopener">Watch story video</a>` : ""}
+    ${renderVideoBlock(story.video_url, story.video_thumbnail_url, "Watch story video")}
     ${disabled
       ? `<button class="btn secondary" type="button" disabled>Contributions not open yet</button>`
       : `<a class="btn primary" href="index.html#contribute">Contribute to this story</a>`

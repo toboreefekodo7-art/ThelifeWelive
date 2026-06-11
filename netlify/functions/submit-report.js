@@ -15,6 +15,13 @@ const allowedReasons = new Set([
   "other"
 ]);
 
+const seriousReasons = new Set([
+  "misleading_or_false_story",
+  "fake_identity_or_impersonation",
+  "misuse_of_funds_concern",
+  "privacy_or_consent_concern"
+]);
+
 const normalizeChoice = (value, fallback) => {
   const normalized = cleanString(value, 120).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
   return normalized || fallback;
@@ -79,16 +86,39 @@ exports.handler = async (event) => {
     });
 
     const table = targetType === "campaign" ? "campaigns" : "stories";
+    const statusPatch = { report_status: "reported" };
+
+    if (targetType === "campaign") {
+      const reports = await supabaseRequest("reports", {
+        query: [
+          "select=id,reason,status",
+          `campaign_id=eq.${encodeURIComponent(targetId)}`
+        ].join("&")
+      });
+
+      const shouldPause = seriousReasons.has(reason) || reports.length >= 3;
+      statusPatch.report_count = reports.length;
+      statusPatch.serious_report_count = reports.filter((item) => seriousReasons.has(item.reason)).length;
+      if (shouldPause) {
+        statusPatch.report_status = "under_review";
+        statusPatch.review_status = "under_review";
+        statusPatch.contributions_paused = true;
+        statusPatch.accepting_contributions = false;
+      }
+    }
+
     await supabaseRequest(table, {
       method: "PATCH",
       query: `id=eq.${encodeURIComponent(targetId)}`,
-      body: { report_status: "reported" },
+      body: statusPatch,
       prefer: "return=minimal"
     });
 
     return json(200, {
       platformActive: true,
-      message: "Report submitted for TLWL review.",
+      message: statusPatch.review_status === "under_review"
+        ? "Report submitted. This campaign is marked for TLWL review."
+        : "Report submitted for TLWL review.",
       reportId: report.id
     });
   } catch (error) {
