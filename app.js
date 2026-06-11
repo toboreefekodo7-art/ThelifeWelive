@@ -450,7 +450,7 @@ function setupPlatformForms() {
         }
 
         if (status) status.textContent = data.message || "Submitted for TLWL review.";
-        window.location.href = "/thanks.html";
+        window.location.href = "thanks.html";
       } catch (error) {
         if (status) status.textContent = `${error.message} Continuing through Netlify Forms.`;
         nativeSubmit(form);
