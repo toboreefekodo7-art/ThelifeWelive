@@ -1,52 +1,63 @@
 # TLWL Visual Dynamic Netlify Website
 
-This version updates the site based on your requests:
-- Uses "Donate to TLWL" / "Support TLWL" language
-- Added a stronger Stories & Videos section
-- Added a featured video area
-- Added a story/video library layout
-- Made the design more visually appealing and premium
-- Kept Netlify Forms
-- Kept Stripe-ready backend starter functions
-- Kept for-profit platform legal pages
-- Added Part 1 platform foundation files for Supabase submissions, reports, public story/campaign pages, and safer campaign checkout rules
+This version supports the TLWL for-profit social impact and crowdfunding model:
+- Uses "Donate to TLWL" / "Support TLWL" / "Contribute to this story" language
+- Keeps the premium warm "world of stories" homepage design
+- Adds a dedicated Watch Stories page at stories.html for all public stories
+- Keeps the homepage story preview cards: Community Spotlight, Personal Journey, and Where the Support Went
+- Adds Supabase-backed story, campaign, report, and media planning
+- Adds Cloudinary Upload Widget hooks for direct video/photo/document uploads
+- Keeps Netlify Forms as fallback for text submissions, not large video files
+- Keeps Stripe checkout inactive until explicitly enabled
+- Keeps for-profit platform legal disclaimers
 
 ## How to deploy
 
 Best for basic site:
-1. Unzip this folder.
-2. Drag the unzipped folder into Netlify.
-3. Make sure index.html is at the root level.
+1. Upload this folder to GitHub or drag the site folder into Netlify.
+2. Make sure index.html is at the root level.
+3. The site can publish without Supabase, Cloudinary, or Stripe.
 
-Best for backend Stripe functions:
-1. Upload this folder to GitHub.
-2. Connect GitHub to Netlify.
-3. Add environment variables:
-   - SUPABASE_URL
-   - SUPABASE_SERVICE_ROLE_KEY
-   - STRIPE_SECRET_KEY
-   - SITE_URL
-   - ENABLE_STRIPE_CHECKOUT=true
+Best for platform features:
+1. Connect GitHub to Netlify.
+2. Create a Supabase project.
+3. Run supabase/schema.sql in the Supabase SQL editor.
+4. Add environment variables in Netlify.
 
-Supabase setup:
-1. Create a Supabase project.
-2. Run supabase/schema.sql in the Supabase SQL editor.
-3. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to Netlify environment variables.
-4. Keep the service role key private. Never put it in frontend code.
+## Environment variables
+
+Supabase:
+- SUPABASE_URL
+- SUPABASE_SERVICE_ROLE_KEY
+
+Cloudinary uploads:
+- CLOUDINARY_CLOUD_NAME
+- CLOUDINARY_UPLOAD_PRESET
+- CLOUDINARY_FOLDER
+- CLOUDINARY_MAX_FILE_SIZE
+
+Stripe, only when ready:
+- SITE_URL
+- ENABLE_STRIPE_CHECKOUT=true
+- STRIPE_SECRET_KEY
+- STRIPE_WEBHOOK_SECRET later for contribution reconciliation
+
+Keep private keys out of frontend code.
 
 ## Important
 
-The site can publish without Stripe.
-The checkout button will show a setup message until Stripe keys are added and ENABLE_STRIPE_CHECKOUT is set to true.
-Campaign contributions require Supabase verification before checkout can open. TLWL support payments remain separate from campaign contributions.
-Stories and videos can be updated in app.js by editing featuredStory and storyItems.
-Part 2 will add direct Cloudinary video uploads and richer upload handling.
+Stripe checkout stays inactive until ENABLE_STRIPE_CHECKOUT=true and STRIPE_SECRET_KEY are added.
+Campaign contributions are separate from TLWL support payments.
+Campaigns may accept contributions when required information is complete and trust/safety checks allow it.
+Payouts to recipients should not be released until recipient/payment verification is complete.
+Reports do not automatically remove a campaign, but serious or repeated reports can pause contributions and mark a campaign for review.
+Contributions and TLWL support payments are not tax-deductible charitable donations unless specifically stated otherwise.
 
 ## Replace first
 
 - your@email.com
 - @tlwlfoundation
-- Campaign info inside netlify/functions/get-campaigns.js
-- Story/video info inside app.js
 - Add real videos/photos/stories
-- Have legal pages reviewed before taking public money
+- Configure Supabase before expecting live public stories
+- Configure Cloudinary before direct uploads
+- Have legal pages reviewed before accepting public money

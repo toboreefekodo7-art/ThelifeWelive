@@ -1,17 +1,10 @@
-const { getSupabaseConfig, supabaseRequest } = require("./lib/supabase");
+const { canAcceptContributions, getSupabaseConfig, supabaseRequest } = require("./lib/supabase");
 
 const json = (statusCode, body) => ({
   statusCode,
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(body)
 });
-
-const canAcceptContributions = (campaign) => (
-  campaign.status === "published"
-  && campaign.verification_status === "verified"
-  && campaign.contributions_paused !== true
-  && !["under_review", "paused", "removed", "refunded_if_needed"].includes(campaign.report_status)
-);
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -46,32 +39,32 @@ exports.handler = async (event) => {
   let campaign = null;
   if (contribution > 0) {
     if (!campaignId) {
-      return json(400, { message: "Please choose a verified campaign before contributing to a story." });
+      return json(400, { message: "Please choose a campaign that is accepting contributions before contributing to a story." });
     }
 
     const { configured } = getSupabaseConfig();
     if (!configured) {
       return json(400, {
-        message: "Campaign contributions are not active yet. Connect Supabase and verify the campaign before opening contributions."
+        message: "Campaign contributions are not active yet. Connect Supabase before opening contributions."
       });
     }
 
     try {
       const campaigns = await supabaseRequest("campaigns", {
         query: [
-          "select=id,title,status,verification_status,report_status,contributions_paused",
+          "select=id,title,status,campaign_status,review_status,payout_status,accepting_contributions,verification_status,report_status,contributions_paused",
           `id=eq.${encodeURIComponent(campaignId)}`,
           "limit=1"
         ].join("&")
       });
       campaign = campaigns[0];
     } catch (error) {
-      return json(400, { message: "Could not verify this campaign before checkout." });
+      return json(400, { message: "Could not check this campaign before checkout." });
     }
 
     if (!campaign || !canAcceptContributions(campaign)) {
       return json(400, {
-        message: "This campaign is not open for contributions yet. TLWL must verify it first, and contributions may be paused during review."
+        message: "This campaign is not open for contributions right now. Contributions may be paused during review or refund review."
       });
     }
   }

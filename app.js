@@ -85,6 +85,8 @@ const money = (value) => {
   return number.toLocaleString("en-US", { style: "currency", currency: "USD" });
 };
 
+let cloudinaryUploadConfig = null;
+
 const menuToggle = document.getElementById("menuToggle");
 const navLinks = document.getElementById("navLinks");
 if (menuToggle) {
@@ -165,8 +167,13 @@ function renderCampaigns(campaigns) {
   if (!openCampaigns) {
     const option = document.createElement("option");
     option.value = "";
-    option.textContent = "No verified campaigns are accepting contributions yet";
+    option.textContent = "No campaigns are accepting contributions yet";
     select.appendChild(option);
+  }
+
+  const requestedCampaign = new URLSearchParams(window.location.search).get("campaign");
+  if (requestedCampaign && Array.from(select.options).some((option) => option.value === requestedCampaign)) {
+    select.value = requestedCampaign;
   }
 
   document.querySelectorAll("[data-campaign-link]").forEach((link) => {
@@ -289,7 +296,7 @@ function setupCheckout() {
     }
 
     if (contribution > 0 && !campaignId) {
-      message.textContent = "No verified campaign is accepting contributions yet. You can still add TLWL support if you want to help keep The Life We Live going.";
+      message.textContent = "No campaign is accepting contributions yet. You can still add TLWL support if you want to help keep The Life We Live going.";
       return;
     }
 
@@ -313,6 +320,85 @@ function setupCheckout() {
     } catch (error) {
       message.textContent = "Checkout backend is not active yet. Deploy with Netlify Functions, add Stripe keys, and enable checkout when ready.";
     }
+  });
+}
+
+function setUploadStatus(form, message) {
+  const status = form.querySelector("[data-upload-status]");
+  if (status) status.textContent = message;
+}
+
+async function loadUploadConfig() {
+  try {
+    const response = await fetch("/api/get-upload-config");
+    const data = await response.json();
+    cloudinaryUploadConfig = data.configured ? data : null;
+  } catch (error) {
+    cloudinaryUploadConfig = null;
+  }
+}
+
+function setUploadField(form, name, value) {
+  const field = form.elements[name];
+  if (field) field.value = value || "";
+}
+
+function applyUploadResult(form, kind, info) {
+  if (kind === "video") {
+    setUploadField(form, "video_url", info.secure_url);
+    setUploadField(form, "video_public_id", info.public_id);
+    setUploadField(form, "video_thumbnail_url", info.thumbnail_url);
+    setUploadField(form, "video_resource_type", info.resource_type || "video");
+    setUploadStatus(form, "Video uploaded. You can submit when the rest of the form is complete.");
+    return;
+  }
+
+  setUploadField(form, "supporting_file_url", info.secure_url);
+  setUploadField(form, "supporting_file_public_id", info.public_id);
+  setUploadField(form, "supporting_file_type", info.resource_type || "auto");
+  setUploadStatus(form, "Supporting media uploaded. You can submit when the rest of the form is complete.");
+}
+
+function setupCloudinaryUploads() {
+  document.querySelectorAll(".upload-trigger").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const form = button.closest("form");
+      if (!form) return;
+
+      if (!cloudinaryUploadConfig) {
+        await loadUploadConfig();
+      }
+
+      if (!cloudinaryUploadConfig || !window.cloudinary) {
+        setUploadStatus(form, "Direct upload is not configured yet. Paste a video link for now.");
+        return;
+      }
+
+      const kind = button.dataset.uploadKind || "video";
+      const widget = window.cloudinary.createUploadWidget({
+        cloudName: cloudinaryUploadConfig.cloudName,
+        uploadPreset: cloudinaryUploadConfig.uploadPreset,
+        folder: cloudinaryUploadConfig.folder,
+        multiple: false,
+        resourceType: kind === "video" ? "video" : "auto",
+        sources: ["local", "camera", "url"],
+        clientAllowedFormats: kind === "video"
+          ? ["mp4", "mov", "webm", "m4v"]
+          : ["jpg", "jpeg", "png", "pdf", "webp"],
+        maxFileSize: cloudinaryUploadConfig.maxFileSize
+      }, (error, result) => {
+        if (error) {
+          setUploadStatus(form, "Upload could not finish. Please try again or paste a link.");
+          return;
+        }
+
+        if (result.event === "success") {
+          applyUploadResult(form, kind, result.info);
+        }
+      });
+
+      widget.open();
+    });
   });
 }
 
@@ -397,5 +483,6 @@ renderStories();
 loadCampaigns().then(renderCampaigns);
 setupAmounts();
 setupCheckout();
+setupCloudinaryUploads();
 setupPlatformForms();
 updateSummary();

@@ -66,10 +66,48 @@ const slugify = (value) => cleanString(value, 90)
   .replace(/^-+|-+$/g, "")
   || `tlwl-${Date.now()}`;
 
+const blockingReviewStatuses = new Set([
+  "under_review",
+  "paused",
+  "contributions_paused",
+  "removed",
+  "refund_review",
+  "refunded_if_needed"
+]);
+
+const publicStoryStatuses = new Set([
+  "public",
+  "published",
+  "auto_approved"
+]);
+
+const publicCampaignStatuses = new Set([
+  "public",
+  "accepting_contributions",
+  "published",
+  "closed"
+]);
+
+const canAcceptContributions = (campaign = {}) => {
+  const status = campaign.campaign_status || campaign.status;
+  const reviewStatus = campaign.review_status || campaign.report_status;
+  const accepting = campaign.accepting_contributions === true || status === "accepting_contributions";
+  const publicEnough = publicCampaignStatuses.has(status);
+
+  return accepting
+    && publicEnough
+    && campaign.contributions_paused !== true
+    && !blockingReviewStatuses.has(reviewStatus);
+};
+
 module.exports = {
+  blockingReviewStatuses,
+  canAcceptContributions,
   cleanString,
   getSupabaseConfig,
   json,
+  publicCampaignStatuses,
+  publicStoryStatuses,
   slugify,
   supabaseRequest,
   toNumber

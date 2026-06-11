@@ -1,4 +1,4 @@
-const { getSupabaseConfig, json, supabaseRequest } = require("./lib/supabase");
+const { canAcceptContributions, getSupabaseConfig, json, supabaseRequest } = require("./lib/supabase");
 
 const fallbackCampaign = {
   id: "first-campaign",
@@ -12,13 +12,6 @@ const fallbackCampaign = {
   report_status: "no_reports",
   updates: []
 };
-
-const canAcceptContributions = (campaign) => (
-  campaign.status === "published"
-  && campaign.verification_status === "verified"
-  && campaign.contributions_paused !== true
-  && !["under_review", "paused", "removed", "refunded_if_needed"].includes(campaign.report_status)
-);
 
 exports.handler = async (event) => {
   const { configured } = getSupabaseConfig();
@@ -43,9 +36,9 @@ exports.handler = async (event) => {
   try {
     const campaigns = await supabaseRequest("campaigns", {
       query: [
-        "select=id,story_id,title,slug,status,goal_amount,amount_raised,supporter_count,fund_use_description,verification_status,report_status,contributions_paused,stories(id,title,slug,category,story_body,video_url)",
+        "select=id,story_id,title,slug,status,campaign_status,review_status,payout_status,accepting_contributions,goal_amount,amount_raised,supporter_count,fund_use_description,verification_status,report_status,contributions_paused,stories(id,title,slug,category,story_body,video_url,video_thumbnail_url)",
         filter,
-        "status=in.(published,closed,flagged)",
+        "status=in.(public,accepting_contributions,published,closed)",
         "limit=1"
       ].join("&")
     });

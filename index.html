@@ -16,7 +16,7 @@
       <button class="menu-toggle" id="menuToggle">Menu</button>
       <ul class="nav-links" id="navLinks">
         <li><a href="#about">About</a></li>
-        <li><a href="#stories">Stories</a></li>
+        <li><a href="stories.html">Watch Stories</a></li>
         <li><a href="#campaigns">Campaigns</a></li>
         <li><a href="#contribute">Contribute</a></li>
         <li><a href="#donate-tlwl">Donate to TLWL</a></li>
@@ -47,7 +47,7 @@
           for-profit social impact and crowdfunding platform built around lived experience.
         </p>
         <div class="hero-buttons">
-          <a href="#stories" class="btn primary">Explore Stories</a>
+          <a href="stories.html" class="btn primary">Explore Stories</a>
           <a href="#contribute" class="btn secondary">Contribute Now</a>
         </div>
         <p class="micro-disclaimer">
@@ -136,6 +136,7 @@
           This is where TLWL can feature video interviews, written stories, campaign updates,
           scholarship moments, and community spotlights.
         </p>
+        <a class="text-link section-link" href="stories.html">View all public stories</a>
       </div>
 
       <div id="featuredStory" class="featured-story"></div>
@@ -147,8 +148,8 @@
         <p class="section-label">Crowdfunding</p>
         <h2>Support a current campaign.</h2>
         <p>
-          Campaign cards can load from Supabase after TLWL verifies and publishes support requests.
-          Contributions stay closed while a campaign is unverified, paused, or under review.
+          Campaign cards can load from Supabase after TLWL publishes support requests.
+          Contributions stay closed when a campaign is paused, under review, removed, or marked for refund review.
         </p>
       </div>
 
@@ -242,8 +243,8 @@
         <p class="section-label">Share Your Story</p>
         <h2>Have a story TLWL should tell?</h2>
         <p>
-          Submit your story for TLWL review. Submitting a story does not guarantee publication
-          or campaign approval.
+          Submit your story for TLWL review. Submitting a story does not guarantee campaign visibility,
+          payout, or support approval.
         </p>
       </div>
 
@@ -272,8 +273,34 @@
           <option value="emergency_assistance">Request emergency assistance</option>
           <option value="nominate_someone_else">Nominate someone else</option>
         </select>
+
+        <div class="campaign-required-fields">
+          <p class="form-label">Campaign details, if you are requesting support</p>
+          <input type="text" name="organizer_name" placeholder="Organizer name" />
+          <input type="text" name="beneficiary_name" placeholder="Beneficiary/recipient name" />
+          <input type="text" name="beneficiary_relationship" placeholder="Relationship to beneficiary" />
+          <input type="text" name="fund_purpose" placeholder="What funds are being raised for" />
+          <textarea name="fund_use_description" placeholder="How funds will be used"></textarea>
+          <textarea name="fund_delivery_plan" placeholder="How funds will be delivered to the beneficiary"></textarea>
+          <label class="checkbox-line">
+            <input type="checkbox" name="disclaimer_acknowledgment" />
+            I understand TLWL is a for-profit social impact platform and contributions are not tax-deductible charitable donations unless specifically stated otherwise.
+          </label>
+        </div>
+
         <input type="url" name="video_url" placeholder="Video link (optional for now)" />
-        <p class="helper-text">Upload your video directly here, or paste a video link if you already have one. Direct video uploads will be added in Part 2.</p>
+        <input type="hidden" name="video_public_id" />
+        <input type="hidden" name="video_thumbnail_url" />
+        <input type="hidden" name="video_resource_type" />
+        <input type="hidden" name="supporting_file_url" />
+        <input type="hidden" name="supporting_file_public_id" />
+        <input type="hidden" name="supporting_file_type" />
+        <div class="upload-actions">
+          <button class="btn subtle-btn upload-trigger" type="button" data-upload-kind="video" data-upload-target="storySubmissionForm">Upload video</button>
+          <button class="btn subtle-btn upload-trigger" type="button" data-upload-kind="supporting" data-upload-target="storySubmissionForm">Upload photo/document</button>
+          <span class="upload-status" data-upload-status>Upload your video directly here, or paste a video link if you already have one.</span>
+        </div>
+        <p class="helper-text">Submitting a story does not guarantee campaign visibility, payout, or support approval.</p>
         <input type="number" name="goal_amount" placeholder="Requested support goal, if any" min="0" />
         <textarea name="story" placeholder="Tell us the story..." required></textarea>
         <label class="checkbox-line">
@@ -324,10 +351,31 @@
           <option value="emergency_assistance">Request emergency assistance</option>
           <option value="nominate_someone_else">Nominate someone else</option>
         </select>
+        <input type="text" name="organizer_name" placeholder="Organizer name" required />
+        <input type="text" name="beneficiary_name" placeholder="Beneficiary/recipient name" required />
+        <input type="text" name="beneficiary_relationship" placeholder="Relationship to beneficiary" required />
+        <input type="text" name="fund_purpose" placeholder="What funds are being raised for" required />
+        <textarea name="fund_use_description" placeholder="How funds will be used" required></textarea>
+        <textarea name="fund_delivery_plan" placeholder="How funds will be delivered to the beneficiary" required></textarea>
         <input type="number" name="goal_amount" placeholder="Estimated fundraising goal" />
         <input type="url" name="video_url" placeholder="Video link (optional for now)" />
-        <p class="helper-text">Submitting a support request does not guarantee campaign approval. Requests that involve money require TLWL verification before contributions can open.</p>
+        <input type="hidden" name="video_public_id" />
+        <input type="hidden" name="video_thumbnail_url" />
+        <input type="hidden" name="video_resource_type" />
+        <input type="hidden" name="supporting_file_url" />
+        <input type="hidden" name="supporting_file_public_id" />
+        <input type="hidden" name="supporting_file_type" />
+        <div class="upload-actions">
+          <button class="btn subtle-btn upload-trigger" type="button" data-upload-kind="video">Upload video</button>
+          <button class="btn subtle-btn upload-trigger" type="button" data-upload-kind="supporting">Upload photo/document</button>
+          <span class="upload-status" data-upload-status>Upload your video directly here, or paste a video link if you already have one.</span>
+        </div>
+        <p class="helper-text">Submitting a support request does not guarantee campaign visibility, payout, or support approval. Contributions may pause if a campaign is reported or under review.</p>
         <textarea name="need" placeholder="Explain the need and how funds would be used..." required></textarea>
+        <label class="checkbox-line">
+          <input type="checkbox" name="disclaimer_acknowledgment" required />
+          I understand TLWL is a for-profit social impact platform and contributions are not tax-deductible charitable donations unless specifically stated otherwise.
+        </label>
         <label class="checkbox-line">
           <input type="checkbox" name="consent" required />
           I understand TLWL may contact me, request verification, and decide whether this request can become a public campaign.
@@ -377,7 +425,7 @@
         <input type="url" name="supporting_file_url" placeholder="Optional screenshot or supporting file link" />
         <p class="helper-text">Direct screenshot/file upload support will be added with the Part 2 upload work.</p>
         <p class="form-status" data-form-status></p>
-        <button type="submit" class="btn primary">Submit Report</button>
+        <button type="submit" class="btn subtle-btn">Submit concern</button>
       </form>
     </section>
 
@@ -422,6 +470,7 @@
     </p>
   </footer>
 
+  <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

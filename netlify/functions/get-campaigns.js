@@ -1,4 +1,4 @@
-const { getSupabaseConfig, json, supabaseRequest } = require("./lib/supabase");
+const { canAcceptContributions, getSupabaseConfig, json, supabaseRequest } = require("./lib/supabase");
 
 const fallbackCampaigns = [
   {
@@ -20,13 +20,6 @@ const fallbackCampaigns = [
   }
 ];
 
-const canAcceptContributions = (campaign) => (
-  campaign.status === "published"
-  && campaign.verification_status === "verified"
-  && campaign.contributions_paused !== true
-  && !["under_review", "paused", "removed", "refunded_if_needed"].includes(campaign.report_status)
-);
-
 exports.handler = async () => {
   const { configured } = getSupabaseConfig();
 
@@ -37,8 +30,8 @@ exports.handler = async () => {
   try {
     const records = await supabaseRequest("campaigns", {
       query: [
-        "select=id,title,slug,status,goal_amount,amount_raised,supporter_count,fund_use_description,verification_status,report_status,contributions_paused",
-        "status=in.(published,closed,flagged)"
+        "select=id,title,slug,status,campaign_status,review_status,payout_status,accepting_contributions,goal_amount,amount_raised,supporter_count,fund_use_description,verification_status,report_status,contributions_paused",
+        "status=in.(public,accepting_contributions,published,closed)"
       ].join("&")
     });
 
@@ -46,9 +39,9 @@ exports.handler = async () => {
       id: campaign.id,
       slug: campaign.slug,
       title: campaign.title,
-      status: campaign.report_status === "under_review" || campaign.contributions_paused
+      status: campaign.review_status === "under_review" || campaign.report_status === "under_review" || campaign.contributions_paused
         ? "Under Review"
-        : campaign.status,
+        : campaign.campaign_status || campaign.status,
       story: campaign.fund_use_description || "This campaign is connected to a TLWL story.",
       goal: Number(campaign.goal_amount || 0),
       raised: Number(campaign.amount_raised || 0),

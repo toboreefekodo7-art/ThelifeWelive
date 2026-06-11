@@ -1,4 +1,4 @@
-const { getSupabaseConfig, json, supabaseRequest } = require("./lib/supabase");
+const { canAcceptContributions, getSupabaseConfig, json, supabaseRequest } = require("./lib/supabase");
 
 exports.handler = async (event) => {
   const { configured } = getSupabaseConfig();
@@ -23,14 +23,22 @@ exports.handler = async (event) => {
   try {
     const stories = await supabaseRequest("stories", {
       query: [
-        "select=id,title,slug,category,story_body,video_url,status,report_status,published_at,campaigns(id,title,slug,status,report_status,contributions_paused)",
+        "select=id,title,slug,category,short_description,story_body,video_url,video_thumbnail_url,status,report_status,published_at,campaigns(id,title,slug,status,campaign_status,review_status,payout_status,accepting_contributions,goal_amount,amount_raised,supporter_count,report_status,contributions_paused)",
         filter,
-        "status=eq.published",
+        "status=in.(public,published,auto_approved)",
         "limit=1"
       ].join("&")
     });
 
-    return json(200, { platformActive: true, story: stories[0] || null });
+    const story = stories[0] || null;
+    if (story && Array.isArray(story.campaigns)) {
+      story.campaigns = story.campaigns.map((campaign) => ({
+        ...campaign,
+        canContribute: canAcceptContributions(campaign)
+      }));
+    }
+
+    return json(200, { platformActive: true, story });
   } catch (error) {
     return json(error.statusCode || 500, { message: "Could not load this story." });
   }
