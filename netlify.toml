@@ -9,3 +9,13 @@
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
+
+[[redirects]]
+  from = "/thanks"
+  to = "/thanks.html"
+  status = 200
+
+[[redirects]]
+  from = "/thank-you"
+  to = "/thanks.html"
+  status = 200
