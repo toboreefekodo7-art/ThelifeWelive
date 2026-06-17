@@ -26,9 +26,43 @@ const setReportTarget = (id) => {
   });
 };
 
-const statusLabel = (status, reportStatus, paused, reviewStatus) => {
-  if (reviewStatus === "under_review" || reportStatus === "under_review" || reportStatus === "paused" || paused) return "Under Review";
-  return String(status || "Pending").replace(/_/g, " ");
+const humanStatus = (status) => {
+  const labels = {
+    story_only: "Story only",
+    submitted: "Submitted",
+    public: "Public",
+    published: "Published",
+    accepting_contributions: "Accepting contributions",
+    under_review: "Under review",
+    contributions_paused: "Contributions paused",
+    payout_pending_verification: "Payout pending verification",
+    payout_verified: "Payout verified",
+    closed: "Closed",
+    removed: "Removed",
+    refund_review: "Refund review",
+    no_reports: "No reports",
+    clear: "Clear"
+  };
+  return labels[status] || String(status || "Pending").replace(/_/g, " ");
+};
+
+const statusKey = (status, reportStatus, paused, reviewStatus) => {
+  if (paused || reviewStatus === "contributions_paused" || reportStatus === "contributions_paused") return "contributions_paused";
+  if (reviewStatus === "under_review" || reportStatus === "under_review" || reportStatus === "paused") return "under_review";
+  if (reviewStatus === "refund_review" || reportStatus === "refund_review") return "refund_review";
+  return status || "pending";
+};
+
+const statusLabel = (status, reportStatus, paused, reviewStatus) => humanStatus(statusKey(status, reportStatus, paused, reviewStatus));
+
+const statusMeta = (label, status, reportStatus, paused, reviewStatus) => {
+  const key = statusKey(status, reportStatus, paused, reviewStatus);
+  return `
+    <span class="public-status-label status-${escapeHtml(key).replace(/[^a-z0-9]+/gi, "-").toLowerCase()}">
+      <strong>${escapeHtml(label)}</strong>
+      ${escapeHtml(humanStatus(key))}
+    </span>
+  `;
 };
 
 const campaignUrl = (campaign) => (
@@ -38,6 +72,50 @@ const campaignUrl = (campaign) => (
 const isDirectVideoUrl = (url) => (
   /\/video\/upload\//i.test(String(url || "")) || /\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(String(url || ""))
 );
+
+const cloudinaryVideoPoster = (url) => {
+  const cleanUrl = String(url || "").split("?")[0];
+  if (!/\/video\/upload\//i.test(cleanUrl)) return "";
+  const posterUrl = cleanUrl.replace(/\.[a-z0-9]+$/i, ".jpg");
+  return posterUrl.replace("/video/upload/", "/video/upload/so_0,w_1200,h_675,c_fill/");
+};
+
+const isVideoAsset = (asset) => {
+  const url = asset?.url || "";
+  const assetType = String(asset?.asset_type || "").toLowerCase();
+  const resourceType = String(asset?.resource_type || "").toLowerCase();
+  const format = String(asset?.format || "").toLowerCase();
+
+  return Boolean(url) && (
+    assetType === "video" ||
+    resourceType === "video" ||
+    ["mp4", "webm", "mov", "m4v"].includes(format) ||
+    isDirectVideoUrl(url)
+  );
+};
+
+const uniqueAssets = (assets = []) => {
+  const seen = new Set();
+  return assets.filter((asset, index) => {
+    if (!asset) return false;
+    const key = asset.id || asset.url || `asset-${index}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
+
+const videoSourceFrom = (primaryUrl, primaryThumbnailUrl, assets = [], label = "Watch story video") => {
+  const videoAsset = assets.find(isVideoAsset);
+  const url = primaryUrl || videoAsset?.url || "";
+  const thumbnailUrl = primaryThumbnailUrl || videoAsset?.thumbnail_url || cloudinaryVideoPoster(url);
+
+  return {
+    url,
+    thumbnailUrl,
+    label: videoAsset?.provider === "cloudinary" ? "Watch uploaded story video" : label
+  };
+};
 
 const renderVideoBlock = (url, thumbnailUrl, label = "Watch story video") => {
   if (!url) {
@@ -150,18 +228,19 @@ async function loadPublicRecord() {
 
 function renderStory(story, platformActive) {
   const campaign = Array.isArray(story.campaigns) ? story.campaigns[0] : null;
-  const campaignStatus = campaign
-    ? statusLabel(campaign.campaign_status || campaign.status, campaign.report_status, campaign.contributions_paused, campaign.review_status)
-    : "Story only";
+  const storyVideo = videoSourceFrom(story.video_url, story.video_thumbnail_url, story.media_assets || []);
   content.innerHTML = `
     <p class="section-label">${escapeHtml(story.category || "Story")}</p>
     <h1>${escapeHtml(story.title)}</h1>
     <div class="public-meta">
-      <span>${escapeHtml(statusLabel(story.status, story.report_status))}</span>
-      <span>${escapeHtml(campaignStatus)}</span>
-      <span>${platformActive ? "Published story" : "Preview placeholder"}</span>
+      ${statusMeta("Story status", story.status, story.report_status)}
+      ${campaign
+        ? statusMeta("Support status", campaign.campaign_status || campaign.status, campaign.report_status, campaign.contributions_paused, campaign.review_status)
+        : statusMeta("Support status", "story_only")
+      }
+      <span class="public-status-label"><strong>Visibility</strong>${platformActive ? "Published story" : "Preview placeholder"}</span>
     </div>
-    ${renderVideoBlock(story.video_url, story.video_thumbnail_url)}
+    ${renderVideoBlock(storyVideo.url, storyVideo.thumbnailUrl, storyVideo.label)}
     <p>${escapeHtml(story.story_body)}</p>
     ${renderMediaGallery(story.media_assets || [])}
     ${campaign ? `
@@ -182,25 +261,29 @@ function renderStory(story, platformActive) {
 
 function renderCampaign(campaign, platformActive) {
   const status = statusLabel(campaign.campaign_status || campaign.status, campaign.report_status, campaign.contributions_paused, campaign.review_status);
+  const statusKeyValue = statusKey(campaign.campaign_status || campaign.status, campaign.report_status, campaign.contributions_paused, campaign.review_status);
   const story = campaign.stories || {};
   const disabled = !campaign.canContribute;
+  const mediaAssets = uniqueAssets([...(story.media_assets || []), ...(campaign.media_assets || [])]);
+  const campaignVideo = videoSourceFrom(story.video_url || campaign.video_url, story.video_thumbnail_url || campaign.video_thumbnail_url, mediaAssets);
 
   content.innerHTML = `
     <p class="section-label">Campaign</p>
     <h1>${escapeHtml(campaign.title)}</h1>
     <div class="public-meta">
-      <span>${escapeHtml(status)}</span>
-      <span>${platformActive ? "Public campaign page" : "Preview placeholder"}</span>
+      ${statusMeta("Campaign status", campaign.campaign_status || campaign.status, campaign.report_status, campaign.contributions_paused, campaign.review_status)}
+      ${statusMeta("Payout status", campaign.payout_status || campaign.verification_status)}
+      <span class="public-status-label"><strong>Visibility</strong>${platformActive ? "Public campaign page" : "Preview placeholder"}</span>
     </div>
     <div class="campaign-meter">
       <p><strong>${money(campaign.amount_raised)}</strong> raised of ${money(campaign.goal_amount)}</p>
       <div class="progress-bar"><div class="progress" style="width: ${Math.min(100, Math.round((Number(campaign.amount_raised || 0) / Number(campaign.goal_amount || 1)) * 100))}%"></div></div>
       <p>${Number(campaign.supporter_count || 0)} supporters</p>
     </div>
-    ${status === "Under Review" ? `<p class="status-note">Under Review: contributions are paused while TLWL reviews this campaign.</p>` : ""}
+    ${statusKeyValue === "under_review" || statusKeyValue === "contributions_paused" ? `<p class="status-note">Under Review: contributions are paused while TLWL reviews this campaign.</p>` : ""}
     <p>${escapeHtml(campaign.fund_use_description || story.story_body || "Campaign details will appear here after TLWL review.")}</p>
-    ${renderVideoBlock(story.video_url, story.video_thumbnail_url, "Watch story video")}
-    ${renderMediaGallery(campaign.media_assets || story.media_assets || [])}
+    ${renderVideoBlock(campaignVideo.url, campaignVideo.thumbnailUrl, campaignVideo.label)}
+    ${renderMediaGallery(mediaAssets)}
     ${disabled
       ? `<button class="btn secondary" type="button" disabled>Contributions not open yet</button>`
       : `<a class="btn primary" href="index.html#contribute">Contribute to this story</a>`
@@ -208,7 +291,13 @@ function renderCampaign(campaign, platformActive) {
     <div class="updates-list">
       <h2>Updates</h2>
       ${(campaign.updates || []).length
-        ? campaign.updates.map((update) => `<article><h3>${escapeHtml(update.title)}</h3><p>${escapeHtml(update.body)}</p></article>`).join("")
+        ? campaign.updates.map((update) => `
+          <article>
+            <h3>${escapeHtml(update.title)}</h3>
+            <p>${escapeHtml(update.body)}</p>
+            ${update.media_url ? `<a class="text-link" href="${escapeHtml(update.media_url)}" target="_blank" rel="noopener">View update media</a>` : ""}
+          </article>
+        `).join("")
         : "<p>No public updates have been posted yet.</p>"
       }
     </div>

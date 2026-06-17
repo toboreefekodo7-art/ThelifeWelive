@@ -33,12 +33,38 @@ const campaignUrl = (campaign) => (
   campaign?.slug ? `campaign.html?slug=${encodeURIComponent(campaign.slug)}` : `campaign.html?id=${encodeURIComponent(campaign?.id || "")}`
 );
 
+const isDirectVideoUrl = (url) => (
+  /\/video\/upload\//i.test(String(url || "")) || /\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(String(url || ""))
+);
+
+const cloudinaryVideoPoster = (url) => {
+  const cleanUrl = String(url || "").split("?")[0];
+  if (!/\/video\/upload\//i.test(cleanUrl)) return "";
+  const posterUrl = cleanUrl.replace(/\.[a-z0-9]+$/i, ".jpg");
+  return posterUrl.replace("/video/upload/", "/video/upload/so_0,w_900,h_506,c_fill/");
+};
+
+const isVideoAsset = (asset) => {
+  const url = asset?.url || "";
+  const assetType = String(asset?.asset_type || "").toLowerCase();
+  const resourceType = String(asset?.resource_type || "").toLowerCase();
+  const format = String(asset?.format || "").toLowerCase();
+
+  return Boolean(url) && (
+    assetType === "video" ||
+    resourceType === "video" ||
+    ["mp4", "webm", "mov", "m4v"].includes(format) ||
+    isDirectVideoUrl(url)
+  );
+};
+
 function renderMedia(story) {
   const assets = Array.isArray(story.media_assets) ? story.media_assets : [];
-  const videoAsset = assets.find((asset) => asset.asset_type === "video" && asset.url);
+  const videoAsset = assets.find(isVideoAsset);
   const photoAsset = assets.find((asset) => (asset.asset_type === "photo" || asset.resource_type === "image") && asset.url);
-  const thumb = story.video_thumbnail_url || videoAsset?.thumbnail_url || story.thumbnail_url || photoAsset?.thumbnail_url || photoAsset?.url;
-  const hasVideo = Boolean(story.video_url || videoAsset?.url);
+  const videoUrl = story.video_url || videoAsset?.url || "";
+  const thumb = story.video_thumbnail_url || videoAsset?.thumbnail_url || cloudinaryVideoPoster(videoUrl) || story.thumbnail_url || photoAsset?.thumbnail_url || photoAsset?.url;
+  const hasVideo = Boolean(videoUrl);
 
   if (thumb) {
     return `
